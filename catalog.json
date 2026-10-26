@@ -1,0 +1,135 @@
+[
+  {
+    "id": "pink",
+    "name": "粉紅地標",
+    "category": "建築",
+    "url": "./assets/models/pink.glb",
+    "poster": "./assets/posters/pink.webp"
+  },
+  {
+    "id": "tower",
+    "name": "弧形高塔展館",
+    "category": "建築",
+    "url": "./assets/models/tower.glb",
+    "poster": "./assets/posters/tower.webp"
+  },
+  {
+    "id": "asset01",
+    "name": "傳統老屋",
+    "category": "建築",
+    "url": "./assets/models/asset01.glb",
+    "poster": "./assets/posters/asset01.webp"
+  },
+  {
+    "id": "asset02",
+    "name": "綠色隧道",
+    "category": "景觀",
+    "url": "./assets/models/asset02.glb",
+    "poster": "./assets/posters/asset02.webp"
+  },
+  {
+    "id": "asset03",
+    "name": "古蹟遺址",
+    "category": "建築",
+    "url": "./assets/models/asset03.glb",
+    "poster": "./assets/posters/asset03.webp"
+  },
+  {
+    "id": "asset04",
+    "name": "太陽能窄樓",
+    "category": "建築",
+    "url": "./assets/models/asset04.glb",
+    "poster": "./assets/posters/asset04.webp"
+  },
+  {
+    "id": "asset05",
+    "name": "屋頂花園樓房",
+    "category": "建築",
+    "url": "./assets/models/asset05.glb",
+    "poster": "./assets/posters/asset05.webp"
+  },
+  {
+    "id": "asset06",
+    "name": "木造小屋",
+    "category": "建築",
+    "url": "./assets/models/asset06.glb",
+    "poster": "./assets/posters/asset06.webp"
+  },
+  {
+    "id": "asset07",
+    "name": "弧形大樓",
+    "category": "建築",
+    "url": "./assets/models/asset07.glb",
+    "poster": "./assets/posters/asset07.webp"
+  },
+  {
+    "id": "asset08",
+    "name": "青綠車站",
+    "category": "建築",
+    "url": "./assets/models/asset08.glb",
+    "poster": "./assets/posters/asset08.webp"
+  },
+  {
+    "id": "asset09",
+    "name": "馬雕像噴水池",
+    "category": "景觀",
+    "url": "./assets/models/asset09.glb",
+    "poster": "./assets/posters/asset09.webp"
+  },
+  {
+    "id": "asset10",
+    "name": "蒸汽火車",
+    "category": "交通",
+    "url": "./assets/models/asset10.glb",
+    "poster": "./assets/posters/asset10.webp"
+  },
+  {
+    "id": "asset11",
+    "name": "電動巴士",
+    "category": "交通",
+    "url": "./assets/models/asset11.glb",
+    "poster": "./assets/posters/asset11.webp"
+  },
+  {
+    "id": "tree02",
+    "name": "條紋圓冠樹",
+    "category": "自然",
+    "url": "./assets/models/tree02.glb",
+    "poster": "./assets/posters/tree02.webp"
+  },
+  {
+    "id": "tree03",
+    "name": "高大針葉樹",
+    "category": "自然",
+    "url": "./assets/models/tree03.glb",
+    "poster": "./assets/posters/tree03.webp"
+  },
+  {
+    "id": "tree04",
+    "name": "深綠寬冠樹",
+    "category": "自然",
+    "url": "./assets/models/tree04.glb",
+    "poster": "./assets/posters/tree04.webp"
+  },
+  {
+    "id": "tree05",
+    "name": "高大闊葉樹",
+    "category": "自然",
+    "url": "./assets/models/tree05.glb",
+    "poster": "./assets/posters/tree05.webp"
+  },
+  {
+    "id": "tree06",
+    "name": "森林山丘",
+    "category": "自然",
+    "url": "./assets/models/tree06.glb",
+    "poster": "./assets/posters/tree06.webp"
+  },
+  {
+    "id": "forest",
+    "name": "山丘與雙樹",
+    "category": "自然",
+    "url": "./assets/models/forest.glb",
+    "poster": "./assets/posters/forest.webp"
+  }
+]

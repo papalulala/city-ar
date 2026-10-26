@@ -1,2 +1,40 @@
-# city-ar
-向城而生 AR 城市工坊
+# 向城而生 · AR 城市工坊
+
+使用 Three.js 製作的城市編輯器，以提供的城市插畫安排初始場景，包含既有 Blender 模型轉出的 19 種 GLB 素材。沒有額外展示底座；草地、步道、溪流、湖泊、小橋與鐵道是場景內容。
+
+## 操作
+- 左側點選素材新增物件；點選場景物件後，用右側位置、方向、大小欄位或操作軸調整。
+- 可複製、刪除、復原、重做、俯視、顯示格線與還原參考配置。
+- 變更自動儲存在目前瀏覽器。「儲存作品」下載 JSON，可在另一台裝置「開啟作品」。不會同步到其他裝置。
+- 「下載 3D 城市」匯出整個場景的 GLB。
+- 「放進真實世界」先產生整座城市，然後在支援的手機啟動 AR。
+
+## 手機 AR
+- Android：支援 ARCore 的裝置，使用提供 WebXR AR 的 Chrome，網站必須使用 HTTPS。
+- iPhone／iPad：Safari，透過 model-viewer 自動產生 USDZ 並啟動 Apple AR Quick Look。
+- AR 是整座城市一起擺放；單一物件的編輯在網頁內完成。
+- 桌面與不支援 AR 的裝置仍可編輯與觀看 3D。
+- 動態 GLB 使用瀏覽器 Blob URL，因此 Android 採 WebXR，沒有使用需要公開模型網址的原生 Scene Viewer。
+- AR 相機追蹤與 iOS Quick Look 需在實機驗證。桌面預覽不能代替手機測試。
+
+## 本機預覽
+
+在本資料夾執行 `python -m http.server 8765`，以 `http://localhost:8765` 開啟。請勿直接用 file:// 開啟 index.html。
+
+## GitHub Pages
+
+1. 將本資料夾的內容放在儲存庫根目錄（index.html 直接位於根目錄）。
+2. 前往 Settings → Pages，Source 選擇 Deploy from a branch。
+3. Branch 選擇 main，資料夾選擇 /(root)，按 Save。
+4. 以 GitHub Pages 實際顯示的 HTTPS 網址開啟網站。
+
+本網站為靜態網站，不需要編譯，也不需要 GitHub Actions 工作流程。
+
+## 技術與素材
+
+- Three.js 0.170.0（MIT），本機 vendor 檔案。
+- @google/model-viewer 4.0.0（Apache-2.0），本機 vendor 檔案。
+- 原始 Blender 模型仍保留在原輸出位置，此網站使用已正規化大小的 GLB 副本。
+- 有些程序材質已轉成網頁可讀的顏色，以接近原始配色。
+- 未提供獨立模型的人物與部分插畫細節沒有做成一比一重建；步道、水系與小橋為依參考圖補建。
+- 模型較多時，請等待 AR 準備完成再啟動。建議不超過 120 個物件。
