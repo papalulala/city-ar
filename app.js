@@ -92,6 +92,21 @@ $('reference-open').onclick=()=>$('reference-dialog').showModal();document.query
 $('reference-reset').onclick=()=>$('confirm-dialog').showModal();$('confirm-reset').onclick=async()=>{$('confirm-dialog').close();pushHistory();select(null);objects.clear();buildings.clear();await loadPreset();scheduleSave();fit();toast('已還原參考圖配置')};
 $('library-toggle').onclick=()=>$('library').classList.toggle('collapsed');
 window.addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)||document.querySelector('dialog[open]'))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();$(e.shiftKey?'redo':'undo').click()}else if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault();removeSelected()}else if(e.key==='Escape')select(null)});
+function captureCityPhoto(){
+ const helper=transform.getHelper(),visibility=[helper.visible,selectionBox.visible,grid.visible];
+ try{helper.visible=false;selectionBox.visible=false;grid.visible=false;controls.update();renderer.render(scene,camera);
+  const source=renderer.domElement;city.updateMatrixWorld(true);camera.updateMatrixWorld(true);
+  let left=source.width,top=source.height,right=0,bottom=0,visiblePoints=0;
+  city.traverse(o=>{if(!o.isMesh||!o.visible)return;if(!o.geometry.boundingBox)o.geometry.computeBoundingBox();const bounds=o.geometry.boundingBox.clone().applyMatrix4(o.matrixWorld);
+   for(const x of [bounds.min.x,bounds.max.x])for(const y of [bounds.min.y,bounds.max.y])for(const z of [bounds.min.z,bounds.max.z]){const p=new THREE.Vector3(x,y,z).project(camera);if(p.z < -1 || p.z > 1)continue;const px=(p.x+1)*source.width/2,py=(1-p.y)*source.height/2;left=Math.min(left,px);right=Math.max(right,px);top=Math.min(top,py);bottom=Math.max(bottom,py);visiblePoints++}
+  });
+  const margin=Math.max(source.width,source.height)*.025;
+  if(visiblePoints){left=Math.max(0,Math.floor(left-margin));top=Math.max(0,Math.floor(top-margin));right=Math.min(source.width,Math.ceil(right+margin));bottom=Math.min(source.height,Math.ceil(bottom+margin))}
+  if(!visiblePoints||right-left<2||bottom-top<2){left=0;top=0;right=source.width;bottom=source.height}
+  const width=right-left,height=bottom-top,ratio=Math.min(1,2048/Math.max(width,height)),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(width*ratio));canvas.height=Math.max(1,Math.round(height*ratio));
+  const ctx=canvas.getContext('2d');if(!ctx)throw Error('此裝置無法產生照片');ctx.drawImage(source,left,top,width,height,0,0,canvas.width,canvas.height);return canvas.toDataURL('image/jpeg',.90);
+ }finally{[helper.visible,selectionBox.visible,grid.visible]=visibility;renderer.render(scene,camera)}
+}
 function download(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),30000)}
 function exportCityScene(width=.9){const output=new THREE.Group();output.name='博愛木都心 向城而生 AR 城市';output.add(city.clone(true));const bounds=new THREE.Box3().setFromObject(output),center=bounds.getCenter(new THREE.Vector3()),factor=width/(bounds.max.x-bounds.min.x);output.children[0].position.set(-center.x,-bounds.min.y,-center.z);output.scale.setScalar(factor);output.updateMatrixWorld(true);return output}
 async function exportCity(width=.9){return new GLTFExporter().parseAsync(exportCityScene(width),{binary:true,onlyVisible:true,maxTextureSize:1024})}
@@ -104,4 +119,4 @@ new ResizeObserver(()=>{const w=wrap.clientWidth,h=wrap.clientHeight;renderer.se
 renderer.setAnimationLoop(()=>{controls.update();if(selected)selectionBox.update();renderer.render(scene,camera)});
 async function loadPreset(){let n=0;for(const [id,x,y,z,size,r]of PRESET){await addObject(id,x,y,z,size,r);n++;if($('loading-detail'))$('loading-detail').textContent=`正在安排城市 ${n} / ${PRESET.length}`}}
 renderCatalog();updateHistory();
-try{await loadPreset();let saved;try{saved=JSON.parse(localStorage.getItem('city-ar-v1')||'null')}catch{}if(saved?.version===1){try{await restore(saved.objects);toast('已恢復你上次編輯的城市')}catch{toast('上次作品無法讀取，已載入參考配置')}}fit();$('loading').remove();window.cityStudio={snapshot,restore,objects,catalog,city,scene,camera,renderer,exportCity,exportCityScene,getSelected:()=>selected,select};window.dispatchEvent(new Event('city-ready'))}catch(e){console.error(e);$('loading').querySelector('strong').textContent='城市暫時無法載入';$('loading-detail').textContent='請重新整理，並透過網站網址開啟（不要直接點開 HTML 檔案）。'}
+try{await loadPreset();let saved;try{saved=JSON.parse(localStorage.getItem('city-ar-v1')||'null')}catch{}if(saved?.version===1){try{await restore(saved.objects);toast('已恢復你上次編輯的城市')}catch{toast('上次作品無法讀取，已載入參考配置')}}fit();$('loading').remove();window.cityStudio={snapshot,restore,objects,catalog,city,scene,camera,renderer,exportCity,exportCityScene,captureCityPhoto,getSelected:()=>selected,select};window.dispatchEvent(new Event('city-ready'))}catch(e){console.error(e);$('loading').querySelector('strong').textContent='城市暫時無法載入';$('loading-detail').textContent='請重新整理，並透過網站網址開啟（不要直接點開 HTML 檔案）。'}

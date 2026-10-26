@@ -1,1 +1,9 @@
-{"name":"city-ar","private":true,"type":"module","scripts":{"serve":"python -m http.server 8765"}}
+{
+  "name": "city-ar",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "serve": "python -m http.server 8765",
+    "test:photo": "node tests/photo-server.test.cjs"
+  }
+}
