@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {encodeARColorTextures} from './ar-color-textures.js';
 
 /** Preserve the editor's directional definition and terrain shadows in portable AR files.
  * No presentation base is added: the texture is applied to existing terrain only.
@@ -40,6 +41,9 @@ export function bakeCityLighting({city,scene,renderer,viewCamera,sun}){
    for(const m of materials){m.map=texture;m.color.setRGB(1,1,1);m.vertexColors=false;m.metalness=0;m.roughness=1;m.emissiveMap=texture;m.emissive.setRGB(.16,.16,.16);m.needsUpdate=true}
    o.userData.arBakedGround=true;
   }else{
+   // Preserve already-portable base-color materials and their UV maps verbatim.
+   // Only procedural/vertex-colored meshes require an embedded image conversion.
+   if(!materials[0].vertexColors||!o.geometry.attributes.color){for(const m of materials)m.vertexColors=false;o.geometry.deleteAttribute('color');o.userData.arPortableBaseMaterial=true;continue}
    if(!o.geometry.attributes.normal)o.geometry.computeVertexNormals();const normals=o.geometry.attributes.normal,oldColor=o.geometry.attributes.color,colors=new Float32Array(normals.count*3);normalMatrix.getNormalMatrix(original.matrixWorld);
    // GLTF primitives use one material; retain the first material's base color in displayColor for USDZ too.
    const base=materials[0].color.clone(),useOld=materials[0].vertexColors&&oldColor;
@@ -50,5 +54,5 @@ export function bakeCityLighting({city,scene,renderer,viewCamera,sun}){
    o.geometry.setAttribute('color',new THREE.BufferAttribute(colors,3));for(const m of materials){m.color.setRGB(1,1,1);m.vertexColors=true;m.needsUpdate=true}o.userData.arBakedSunlight=true;
   }
  }
- output.userData.arLighting={version:1,groundTexture:[pixelWidth,pixelHeight],groundMeshes:ground.size,litMeshes:meshes.length-ground.size};return output;
+ output.userData.arLighting={version:2,groundTexture:[pixelWidth,pixelHeight],groundMeshes:ground.size,litMeshes:meshes.length-ground.size};return encodeARColorTextures(output,renderer.capabilities.maxTextureSize);
 }

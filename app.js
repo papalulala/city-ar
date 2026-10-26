@@ -1,12 +1,12 @@
 import * as THREE from 'three';
-import {bakeCityLighting} from './ar-lighting.js';
+import {bakeCityLighting} from './ar-lighting.js?v=ar-textures-20261026';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {TransformControls} from 'three/addons/controls/TransformControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {GLTFExporter} from 'three/addons/exporters/GLTFExporter.js';
-import {USDZExporter} from 'three/addons/exporters/USDZExporter.js?v=ar-lighting-20261026';
+import {USDZExporter} from 'three/addons/exporters/USDZExporter.js?v=ar-textures-20261026';
 const $=id=>document.getElementById(id), wrap=$('canvas-wrap');
-const catalog=await fetch('./catalog.json').then(r=>{if(!r.ok)throw Error('模型清單無法讀取');return r.json()});
+const catalog=await fetch('./catalog.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('模型清單無法讀取');return r.json()});
 const loader=new GLTFLoader(),cache=new Map(), objects=new Map();
 let selected=null,category='全部',history=[],future=[],restoring=false,dirty=false,modelURL=null,iosModelURL=null,arVersion=0,arReady=false;
 const scene=new THREE.Scene();scene.background=new THREE.Color('#f0f2e9');
