@@ -1,7 +1,7 @@
 # Google Drive 拍照上傳設定
 
 接收程式已固定使用指定資料夾：
-https://drive.google.com/drive/folders/1gGlC5NkEwCZ2y4TeVnq4C3Hrdqnz3sAO
+https://drive.google.com/drive/folders/1K5rLmUPG4Il4VB1OLUIWcn-1RFY5KlrX
 
 1. 使用擁有此資料夾編輯權限的 Google 帳號開啟 https://script.google.com/home/start 。
 2. 建立「新專案」，名稱可設為「博愛木都心作品照片」。
