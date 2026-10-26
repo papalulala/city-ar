@@ -1,3 +1,4 @@
+import {createWeather} from './weather.js?v=weather-20261026';
 import * as THREE from 'three';
 import {bakeCityLighting} from './ar-lighting.js?v=ar-textures-20261026';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
@@ -24,6 +25,8 @@ const fill=new THREE.DirectionalLight(0xc5dce6,.42);fill.name='冷色柔和補�
 const shadowReceiver=new THREE.Mesh(new THREE.PlaneGeometry(80,50),new THREE.ShadowMaterial({color:0x354b38,opacity:.24}));shadowReceiver.name='透明落地陰影';shadowReceiver.rotation.x=-Math.PI/2;shadowReceiver.position.y=-.045;shadowReceiver.receiveShadow=true;scene.add(shadowReceiver);
 function refreshShadows(){renderer.shadowMap.needsUpdate=true}
 const city=new THREE.Group();city.name='博愛木都心 向城而生';scene.add(city);const landscape=new THREE.Group();landscape.name='草地步道與水系';city.add(landscape);const buildings=new THREE.Group();buildings.name='可編輯城市物件';city.add(buildings);
+const weather=createWeather({scene,sun:key,sky:skyLight,fill,onChange:state=>{refreshShadows();$('weather-state').textContent=state.mode==='random'?'隨機模式 · 目前'+state.label:state.label;}});
+$('weather-mode').addEventListener('change',e=>weather.setMode(e.target.value));
 const grid=new THREE.GridHelper(48,48,0xaabda0,0xd8dfcd);grid.position.y=-.035;grid.visible=false;scene.add(grid);
 const transform=new TransformControls(camera,renderer.domElement);transform.setSize(.8);scene.add(transform.getHelper());transform.addEventListener('dragging-changed',e=>{controls.enabled=!e.value;if(e.value){pushHistory()}else{syncInspector();scheduleSave()}});transform.addEventListener('objectChange',()=>{refreshShadows();if(selected){selected.position.y=Math.max(0,selected.position.y);syncInspector()}});
 const selectionBox=new THREE.BoxHelper(new THREE.Object3D(),0xd28c58);selectionBox.visible=false;scene.add(selectionBox);
@@ -109,7 +112,7 @@ function captureCityPhoto(){
  }finally{[helper.visible,selectionBox.visible,grid.visible]=visibility;renderer.render(scene,camera)}
 }
 function download(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),30000)}
-function exportCityScene(width=.9){const output=new THREE.Group();output.name='博愛木都心 向城而生 AR 城市';output.add(bakeCityLighting({city,scene,renderer,viewCamera:camera,sun:key}));const bounds=new THREE.Box3().setFromObject(output),center=bounds.getCenter(new THREE.Vector3()),factor=width/(bounds.max.x-bounds.min.x);output.children[0].position.set(-center.x,-bounds.min.y,-center.z);output.scale.setScalar(factor);output.updateMatrixWorld(true);return output}
+function exportCityScene(width=.9){const output=new THREE.Group();output.name='博愛木都心 向城而生 AR 城市';output.add(bakeCityLighting({city,scene,renderer,viewCamera:camera,sun:key}));output.children[0].add(weather.snapshot());const bounds=new THREE.Box3().setFromObject(output),center=bounds.getCenter(new THREE.Vector3()),factor=width/(bounds.max.x-bounds.min.x);output.children[0].position.set(-center.x,-bounds.min.y,-center.z);output.scale.setScalar(factor);output.updateMatrixWorld(true);return output}
 async function exportCity(width=.9){return new GLTFExporter().parseAsync(exportCityScene(width),{binary:true,onlyVisible:true,maxTextureSize:2048})}
 $('download-glb').onclick=async()=>{const b=$('download-glb');b.disabled=true;toast('正在整理完整 3D 城市…');try{const data=await exportCity();download(new Blob([data],{type:'model/gltf-binary'}),'博愛木都心 向城而生-city.glb');toast('已下載整座城市 GLB')}catch(e){console.error(e);toast('匯出失敗，請減少物件後重試')}finally{b.disabled=false}};
 async function prepareAR(){
@@ -129,7 +132,7 @@ $('ar-open').onclick=()=>{$('ar-dialog').showModal();prepareAR()};$('rebuild-ar'
 $('ar-viewer').addEventListener('error',()=>{$('ar-state').textContent='模型預覽無法載入，請重新準備。'});$('ar-viewer').addEventListener('ar-status',e=>{if(e.detail.status==='failed')$('ar-state').textContent='無法啟動 AR。請確認手機支援 AR、使用 Safari 或 Chrome，並已允許相機。'});
 $('download-usdz').onclick=async()=>{const b=$('download-usdz');b.disabled=true;$('ar-state').textContent='正在產生 iPhone 用的 USDZ 模型…';try{const bytes=await new USDZExporter().parseAsync(exportCityScene(Number($('ar-width').value)),{quickLookCompatible:true});download(new Blob([bytes],{type:'application/octet-stream'}),'博愛木都心 向城而生-city.usdz');$('ar-state').textContent='已下載 USDZ，可在 iPhone 的「檔案」App 中開啟。'}catch(e){console.error(e);$('ar-state').textContent='USDZ 匯出失敗；也可直接使用 AR 觀看按鈕。'}finally{b.disabled=false}};
 new ResizeObserver(()=>{const w=wrap.clientWidth,h=wrap.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();if(window.cityStudio)fit($('view-top').classList.contains('active'))}).observe(wrap);
-renderer.setAnimationLoop(()=>{controls.update();if(selected)selectionBox.update();renderer.render(scene,camera)});
+renderer.setAnimationLoop(now=>{weather.update(now);controls.update();if(selected)selectionBox.update();renderer.render(scene,camera)});
 async function loadPreset(){let n=0;for(const [id,x,y,z,size,r]of PRESET){await addObject(id,x,y,z,size,r);n++;if($('loading-detail'))$('loading-detail').textContent=`正在安排城市 ${n} / ${PRESET.length}`}}
 renderCatalog();updateHistory();
-try{await loadPreset();let saved;try{saved=JSON.parse(localStorage.getItem('city-ar-v1')||'null')}catch{}if(saved?.version===1){try{await restore(saved.objects);toast('已恢復你上次編輯的城市')}catch{toast('上次作品無法讀取，已載入參考配置')}}fit();$('loading').remove();window.cityStudio={snapshot,restore,objects,catalog,city,scene,camera,renderer,exportCity,exportCityScene,captureCityPhoto,getSelected:()=>selected,select};window.dispatchEvent(new Event('city-ready'))}catch(e){console.error(e);$('loading').querySelector('strong').textContent='城市暫時無法載入';$('loading-detail').textContent='請重新整理，並透過網站網址開啟（不要直接點開 HTML 檔案）。'}
+try{await loadPreset();let saved;try{saved=JSON.parse(localStorage.getItem('city-ar-v1')||'null')}catch{}if(saved?.version===1){try{await restore(saved.objects);toast('已恢復你上次編輯的城市')}catch{toast('上次作品無法讀取，已載入參考配置')}}fit();$('loading').remove();window.cityStudio={weather,snapshot,restore,objects,catalog,city,scene,camera,renderer,exportCity,exportCityScene,captureCityPhoto,getSelected:()=>selected,select};window.dispatchEvent(new Event('city-ready'))}catch(e){console.error(e);$('loading').querySelector('strong').textContent='城市暫時無法載入';$('loading-detail').textContent='請重新整理，並透過網站網址開啟（不要直接點開 HTML 檔案）。'}
