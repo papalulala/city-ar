@@ -11,3 +11,10 @@
 
 /* Keep the supplied caption artwork inside the previous text dimensions. */
 .canvas-caption h2 .caption-art{display:block;width:288px;height:36px;max-width:none;max-height:none;object-fit:contain}@media(max-width:700px){.canvas-caption h2 .caption-art{width:188px;height:24px}}
+
+
+
+
+.weather-controls{margin:20px 0;padding:14px;border:1px solid #d8dfd1;border-radius:12px}.weather-controls label{display:block;font-weight:600;margin-bottom:8px}.weather-controls select{width:100%;padding:9px;border:1px solid #bdcbb8;border-radius:8px;background:#fff;color:#294c3b;font:inherit}.weather-controls p{font-size:13px;margin:8px 0}.weather-controls small{font-size:11px;line-height:1.6;color:#647561}
+
+.weather-controls{position:absolute;right:22px;top:64px;width:152px;margin:0;background:#fffef9ed;z-index:2;padding:10px}.weather-controls label{font-size:12px}.weather-controls small{display:none}.weather-controls p{margin:5px 0 0;font-size:11px}@media(max-width:700px){.weather-controls{right:15px;top:50px;width:112px;padding:7px}.weather-controls label,.weather-controls p{font-size:9px}.weather-controls select{padding:5px;font-size:11px}}
