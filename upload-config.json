@@ -1,1 +1,5 @@
-{"endpoint":"","maxImageBytes":3145728,"timeoutMs":90000}
+{
+  "endpoint": "https://script.google.com/macros/s/AKfycbx6zUqdZm4NrM3lYqO3gQqERJhQojgZzS5slW7QpmIDsMru2cVYhc4LMNJr_6vzTw/exec",
+  "maxImageBytes": 3145728,
+  "timeoutMs": 90000
+}
