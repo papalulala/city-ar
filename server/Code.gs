@@ -2,7 +2,7 @@
  * 部署為網頁應用程式：執行身分「我」，存取權「所有人」。
  * 照片只存入下方固定資料夾，不會更動資料夾或照片的分享設定。
  */
-const PHOTO_FOLDER_ID = '1gGlC5NkEwCZ2y4TeVnq4C3Hrdqnz3sAO';
+const PHOTO_FOLDER_ID = '1K5rLmUPG4Il4VB1OLUIWcn-1RFY5KlrX';
 const PHOTO_MAX_BYTES = 3 * 1024 * 1024;
 const PHOTO_CACHE_SECONDS = 21600;
 
