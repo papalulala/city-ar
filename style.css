@@ -20,3 +20,6 @@
 .weather-controls{position:absolute;right:22px;top:64px;width:152px;margin:0;background:#fffef9ed;z-index:2;padding:10px}.weather-controls label{font-size:12px}.weather-controls small{display:none}.weather-controls p{margin:5px 0 0;font-size:11px}@media(max-width:700px){.weather-controls{right:15px;top:50px;width:112px;padding:7px}.weather-controls label,.weather-controls p{font-size:9px}.weather-controls select{padding:5px;font-size:11px}}
 
 .weather-controls{display:none}
+
+
+.library-heading h1 .city-start-title{display:block;width:184px;height:29px;object-fit:contain}@media(max-width:700px){.library-heading h1 .city-start-title{width:128px;height:20px}}
