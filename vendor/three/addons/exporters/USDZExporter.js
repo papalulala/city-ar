@@ -593,6 +593,19 @@ function buildMaterial( material, textures, quickLookCompatible = false ) {
 
 		samplers.push( buildTexture( material.map, 'diffuse', material.color ) );
 
+	} else if ( material.vertexColors ) {
+
+		// Preserve baked displayColor on iOS; USDPreviewSurface does not read it automatically.
+		inputs.push( `${ pad }color3f inputs:diffuseColor.connect = </Materials/Material_${ material.id }/VertexColorReader.outputs:result>` );
+		samplers.push( `
+		def Shader "VertexColorReader"
+		{
+			uniform token info:id = "UsdPrimvarReader_float3"
+			token inputs:varname = "displayColor"
+			float3 inputs:fallback = (1, 1, 1)
+			float3 outputs:result
+		}` );
+
 	} else {
 
 		inputs.push( `${ pad }color3f inputs:diffuseColor = ${ buildColor( material.color ) }` );

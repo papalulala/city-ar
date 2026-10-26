@@ -1,13 +1,14 @@
 import * as THREE from 'three';
+import {bakeCityLighting} from './ar-lighting.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {TransformControls} from 'three/addons/controls/TransformControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {GLTFExporter} from 'three/addons/exporters/GLTFExporter.js';
-import {USDZExporter} from 'three/addons/exporters/USDZExporter.js';
+import {USDZExporter} from 'three/addons/exporters/USDZExporter.js?v=ar-lighting-20261026';
 const $=id=>document.getElementById(id), wrap=$('canvas-wrap');
 const catalog=await fetch('./catalog.json').then(r=>{if(!r.ok)throw Error('模型清單無法讀取');return r.json()});
 const loader=new GLTFLoader(),cache=new Map(), objects=new Map();
-let selected=null,category='全部',history=[],future=[],restoring=false,dirty=false,modelURL=null,arVersion=0,arReady=false;
+let selected=null,category='全部',history=[],future=[],restoring=false,dirty=false,modelURL=null,iosModelURL=null,arVersion=0,arReady=false;
 const scene=new THREE.Scene();scene.background=new THREE.Color('#f0f2e9');
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));renderer.setSize(wrap.clientWidth,wrap.clientHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.03;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;wrap.prepend(renderer.domElement);
 const camera=new THREE.PerspectiveCamera(35,1,.02,250);camera.position.set(25,23,37);
@@ -108,10 +109,22 @@ function captureCityPhoto(){
  }finally{[helper.visible,selectionBox.visible,grid.visible]=visibility;renderer.render(scene,camera)}
 }
 function download(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),30000)}
-function exportCityScene(width=.9){const output=new THREE.Group();output.name='博愛木都心 向城而生 AR 城市';output.add(city.clone(true));const bounds=new THREE.Box3().setFromObject(output),center=bounds.getCenter(new THREE.Vector3()),factor=width/(bounds.max.x-bounds.min.x);output.children[0].position.set(-center.x,-bounds.min.y,-center.z);output.scale.setScalar(factor);output.updateMatrixWorld(true);return output}
-async function exportCity(width=.9){return new GLTFExporter().parseAsync(exportCityScene(width),{binary:true,onlyVisible:true,maxTextureSize:1024})}
+function exportCityScene(width=.9){const output=new THREE.Group();output.name='博愛木都心 向城而生 AR 城市';output.add(bakeCityLighting({city,scene,renderer,viewCamera:camera,sun:key}));const bounds=new THREE.Box3().setFromObject(output),center=bounds.getCenter(new THREE.Vector3()),factor=width/(bounds.max.x-bounds.min.x);output.children[0].position.set(-center.x,-bounds.min.y,-center.z);output.scale.setScalar(factor);output.updateMatrixWorld(true);return output}
+async function exportCity(width=.9){return new GLTFExporter().parseAsync(exportCityScene(width),{binary:true,onlyVisible:true,maxTextureSize:2048})}
 $('download-glb').onclick=async()=>{const b=$('download-glb');b.disabled=true;toast('正在整理完整 3D 城市…');try{const data=await exportCity();download(new Blob([data],{type:'model/gltf-binary'}),'博愛木都心 向城而生-city.glb');toast('已下載整座城市 GLB')}catch(e){console.error(e);toast('匯出失敗，請減少物件後重試')}finally{b.disabled=false}};
-async function prepareAR(){const version=++arVersion;arReady=false;$('ar-state').textContent='正在整理整座城市，模型較多時請稍候…';$('rebuild-ar').disabled=true;$('download-usdz').disabled=true;try{await customElements.whenDefined('model-viewer');const data=await exportCity(Number($('ar-width').value));if(version!==arVersion)return;const next=URL.createObjectURL(new Blob([data],{type:'model/gltf-binary'}));const prev=modelURL;modelURL=next;$('ar-viewer').src=next;$('ar-viewer').addEventListener('load',()=>{if(prev)URL.revokeObjectURL(prev);arReady=true;$('download-usdz').disabled=false;$('ar-state').textContent=$('ar-viewer').canActivateAR?'城市已就緒，點選下方「在我的空間觀看」。':'城市已就緒。此裝置目前提供 3D 預覽；請用支援 AR 的手機開啟 HTTPS 網址。'},{once:true})}catch(e){console.error(e);$('ar-state').textContent='AR 模型準備失敗，請關閉後重新嘗試。'}finally{$('rebuild-ar').disabled=false}}
+async function prepareAR(){
+ const version=++arVersion;arReady=false;$('ar-viewer').querySelector('.mv-progress').hidden=false;$('ar-state').textContent='正在保留日光與投影，整理整座城市…';$('rebuild-ar').disabled=true;$('download-usdz').disabled=true;$('ar-launch').disabled=true;
+ try{
+  await customElements.whenDefined('model-viewer');
+  const arScene=exportCityScene(Number($('ar-width').value)),data=await new GLTFExporter().parseAsync(arScene,{binary:true,onlyVisible:true,maxTextureSize:2048});
+  const isApple=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);let iosBytes=null;
+  if(isApple){$('ar-state').textContent='正在為 iPhone 保留城市光影…';iosBytes=await new USDZExporter().parseAsync(arScene,{quickLookCompatible:true,maxTextureSize:2048})}
+  if(version!==arVersion)return;
+  const next=URL.createObjectURL(new Blob([data],{type:'model/gltf-binary'})),nextIOS=iosBytes?URL.createObjectURL(new Blob([iosBytes],{type:'model/vnd.usdz+zip'})):null,prev=modelURL,prevIOS=iosModelURL;modelURL=next;iosModelURL=nextIOS;
+  if(nextIOS)$('ar-viewer').setAttribute('ios-src',nextIOS);else $('ar-viewer').removeAttribute('ios-src');
+  $('ar-viewer').addEventListener('load',()=>{if(version!==arVersion)return;$('ar-viewer').querySelector('.mv-progress').hidden=true;if(prev)URL.revokeObjectURL(prev);if(prevIOS)URL.revokeObjectURL(prevIOS);arReady=true;$('download-usdz').disabled=false;$('ar-launch').disabled=false;$('ar-state').textContent=$('ar-viewer').canActivateAR?'城市光影已就緒，點選下方「在我的空間觀看」。':'城市光影已就緒。此裝置提供 3D 預覽；請用支援 AR 的手機開啟 HTTPS 網址。'},{once:true});$('ar-viewer').src=next;
+ }catch(e){console.error(e);$('ar-state').textContent='AR 模型準備失敗，請關閉後重新嘗試。'}finally{$('rebuild-ar').disabled=false}
+}
 $('ar-open').onclick=()=>{$('ar-dialog').showModal();prepareAR()};$('rebuild-ar').onclick=prepareAR;$('ar-width').onchange=prepareAR;
 $('ar-viewer').addEventListener('error',()=>{$('ar-state').textContent='模型預覽無法載入，請重新準備。'});$('ar-viewer').addEventListener('ar-status',e=>{if(e.detail.status==='failed')$('ar-state').textContent='無法啟動 AR。請確認手機支援 AR、使用 Safari 或 Chrome，並已允許相機。'});
 $('download-usdz').onclick=async()=>{const b=$('download-usdz');b.disabled=true;$('ar-state').textContent='正在產生 iPhone 用的 USDZ 模型…';try{const bytes=await new USDZExporter().parseAsync(exportCityScene(Number($('ar-width').value)),{quickLookCompatible:true});download(new Blob([bytes],{type:'application/octet-stream'}),'博愛木都心 向城而生-city.usdz');$('ar-state').textContent='已下載 USDZ，可在 iPhone 的「檔案」App 中開啟。'}catch(e){console.error(e);$('ar-state').textContent='USDZ 匯出失敗；也可直接使用 AR 觀看按鈕。'}finally{b.disabled=false}};
