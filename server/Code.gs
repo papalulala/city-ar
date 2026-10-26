@@ -17,6 +17,7 @@ function doPost(e) {
   let lock;
   let locked = false;
   try {
+    if (containsInappropriateTitle(p.title)) throw new Error('內容含有不適當用語，請修改後再上傳。');
     const title = cleanTitle_(p.title);
     if (!title) throw new Error('請填寫作品名稱（最多 60 個字）。');
     const jpeg = String(p.image || '');
@@ -49,7 +50,7 @@ function doPost(e) {
   } catch (error) {
     const text = String(error && error.message || '');
     // Never expose Drive IDs, account information, stack traces or file listings.
-    const message = /^(請填寫作品名稱|照片|拍照時間)/.test(text) ? text : '目前無法存入作品資料夾，請稍後重試或聯絡老師。';
+    const message = /^(請填寫作品名稱|照片|拍照時間|內容含有不適當用語)/.test(text) ? text : '目前無法存入作品資料夾，請稍後重試或聯絡老師。';
     const result = {status:'error', message:message};
     cache.put(cacheKey, JSON.stringify(result), PHOTO_CACHE_SECONDS);
     return json_(result);
@@ -89,4 +90,14 @@ function json_(data) {
 function checkPhotoFolder() {
   const folder = DriveApp.getFolderById(PHOTO_FOLDER_ID);
   console.log('作品照片資料夾已可存取：' + folder.getName());
+}
+
+function containsInappropriateTitle(value) {
+  // Normalize width, case, separators and common simplified spellings before matching.
+  const normalized = String(value || '').normalize('NFKC').toLowerCase()
+    .replace(/妈/g, '媽').replace(/鸡/g, '雞').replace(/机/g, '機').replace(/贱/g, '賤');
+  const compact = normalized.replace(/[\s\p{P}\p{S}\p{Cf}]/gu, '');
+  const words = ['幹', '幹你娘', '幹妳娘', '幹你媽', '幹妳媽', '操你媽', '操妳媽', '肏你媽', '他媽的', '去你媽的', '狗娘養', '婊子', '賤人', '臭婊', '雞掰', '雞巴', '機掰', '膣屄'];
+  return words.some(word => compact.includes(word)) ||
+    /(?:^|[^a-z0-9])(fuck|fucking|motherfucker|bitch|asshole|shit)(?=$|[^a-z0-9])/.test(normalized);
 }
