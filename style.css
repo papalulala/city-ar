@@ -10,4 +10,4 @@
 .brand-title{display:block}.brand-image-row{display:flex;align-items:center;gap:11px}.brand-image-row img{display:block;object-fit:contain;height:auto;flex-shrink:0}.brand-boai{width:156px}.brand-city{width:106px}@media(max-width:700px){.brand .brand-mark{display:none}.brand-image-row{flex-direction:column;align-items:flex-start;gap:2px}.brand-boai{width:108px}.brand-city{width:83px}.brand{gap:0}.header{gap:8px}}@media(max-width:360px){.brand-boai{width:98px}.brand-city{width:77px}}
 
 /* Keep the supplied caption artwork inside the previous text dimensions. */
-.canvas-caption h2 .caption-art{display:block;width:auto;height:.4em;max-height:.4em;max-width:4.4em;object-fit:contain}
+.canvas-caption h2 .caption-art{display:block;width:288px;height:36px;max-width:none;max-height:none;object-fit:contain}@media(max-width:700px){.canvas-caption h2 .caption-art{width:188px;height:24px}}
