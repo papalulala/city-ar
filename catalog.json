@@ -1,91 +1,91 @@
 [
   {
     "id": "pink",
-    "name": "粉紅地標",
+    "name": "嘉義市西區博愛國小",
     "category": "建築",
     "url": "./assets/models/pink.glb",
     "poster": "./assets/posters/pink.webp"
   },
   {
     "id": "tower",
-    "name": "弧形高塔展館",
+    "name": "森林之歌",
     "category": "建築",
     "url": "./assets/models/tower.glb",
     "poster": "./assets/posters/tower.webp"
   },
   {
     "id": "asset01",
-    "name": "傳統老屋",
+    "name": "木都老屋",
     "category": "建築",
     "url": "./assets/models/asset01.glb",
     "poster": "./assets/posters/asset01.webp"
   },
   {
     "id": "asset02",
-    "name": "綠色隧道",
+    "name": "道將圳",
     "category": "景觀",
     "url": "./assets/models/asset02.glb",
     "poster": "./assets/posters/asset02.webp"
   },
   {
     "id": "asset03",
-    "name": "古蹟遺址",
+    "name": "建國二村",
     "category": "建築",
     "url": "./assets/models/asset03.glb",
     "poster": "./assets/posters/asset03.webp"
   },
   {
     "id": "asset04",
-    "name": "太陽能窄樓",
+    "name": "綠能建築",
     "category": "建築",
     "url": "./assets/models/asset04.glb",
     "poster": "./assets/posters/asset04.webp"
   },
   {
     "id": "asset05",
-    "name": "屋頂花園樓房",
+    "name": "綠色建築",
     "category": "建築",
     "url": "./assets/models/asset05.glb",
     "poster": "./assets/posters/asset05.webp"
   },
   {
     "id": "asset06",
-    "name": "木造小屋",
+    "name": "木都職人",
     "category": "建築",
     "url": "./assets/models/asset06.glb",
     "poster": "./assets/posters/asset06.webp"
   },
   {
     "id": "asset07",
-    "name": "弧形大樓",
+    "name": "美術館",
     "category": "建築",
     "url": "./assets/models/asset07.glb",
     "poster": "./assets/posters/asset07.webp"
   },
   {
     "id": "asset08",
-    "name": "青綠車站",
+    "name": "北門車站",
     "category": "建築",
     "url": "./assets/models/asset08.glb",
     "poster": "./assets/posters/asset08.webp"
   },
   {
     "id": "asset09",
-    "name": "馬雕像噴水池",
+    "name": "中央噴水池",
     "category": "景觀",
     "url": "./assets/models/asset09.glb",
     "poster": "./assets/posters/asset09.webp"
   },
   {
     "id": "asset10",
-    "name": "蒸汽火車",
+    "name": "阿里山小火車",
     "category": "交通",
     "url": "./assets/models/asset10.glb",
     "poster": "./assets/posters/asset10.webp"
   },
   {
     "id": "asset11",
-    "name": "電動巴士",
+    "name": "永續旅遊",
     "category": "交通",
     "url": "./assets/models/asset11.glb",
     "poster": "./assets/posters/asset11.webp"
