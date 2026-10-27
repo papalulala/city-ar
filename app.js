@@ -1,4 +1,4 @@
-import {createWeather} from './weather.js?v=weather-20261026';
+import {createWeather} from './weather.js?v=rain-test-20261027';
 import * as THREE from 'three';
 import {bakeCityLighting} from './ar-lighting.js?v=ar-textures-20261026';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
@@ -11,7 +11,7 @@ const catalog=await fetch('./catalog.json',{cache:'no-store'}).then(r=>{if(!r.ok
 const loader=new GLTFLoader(),cache=new Map(), objects=new Map();
 let selected=null,category='全部',history=[],future=[],restoring=false,dirty=false,modelURL=null,iosModelURL=null,arVersion=0,arReady=false;
 const scene=new THREE.Scene();scene.background=new THREE.Color('#f0f2e9');
-const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));renderer.setSize(wrap.clientWidth,wrap.clientHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.03;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;wrap.prepend(renderer.domElement);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));renderer.setSize(wrap.clientWidth,wrap.clientHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.03;renderer.localClippingEnabled=true;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;wrap.prepend(renderer.domElement);
 const camera=new THREE.PerspectiveCamera(35,1,.02,250);camera.position.set(25,23,37);
 const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.08;controls.target.set(0,.5,0);controls.maxPolarAngle=Math.PI*.49;controls.minDistance=7;controls.maxDistance=100;
 // Warm afternoon sun, a soft sky fill, and a low-intensity cool bounce.
@@ -25,7 +25,7 @@ const fill=new THREE.DirectionalLight(0xc5dce6,.42);fill.name='冷色柔和補�
 const shadowReceiver=new THREE.Mesh(new THREE.PlaneGeometry(80,50),new THREE.ShadowMaterial({color:0x354b38,opacity:.24}));shadowReceiver.name='透明落地陰影';shadowReceiver.rotation.x=-Math.PI/2;shadowReceiver.position.y=-.045;shadowReceiver.receiveShadow=true;scene.add(shadowReceiver);
 function refreshShadows(){renderer.shadowMap.needsUpdate=true}
 const city=new THREE.Group();city.name='博愛木都心 向城而生';scene.add(city);const landscape=new THREE.Group();landscape.name='草地步道與水系';city.add(landscape);const buildings=new THREE.Group();buildings.name='可編輯城市物件';city.add(buildings);
-const weather=createWeather({scene,sun:key,sky:skyLight,fill,onChange:state=>{refreshShadows();$('weather-state').textContent=state.mode==='random'?'隨機模式 · 目前'+state.label:state.label;}});
+const weather=createWeather({scene,sun:key,sky:skyLight,fill,camera,onChange:state=>{refreshShadows();$('weather-state').textContent=state.mode==='random'?'隨機模式 · 目前'+state.label:state.label;}});
 $('weather-mode').addEventListener('change',e=>weather.setMode(e.target.value));
 const grid=new THREE.GridHelper(48,48,0xaabda0,0xd8dfcd);grid.position.y=-.035;grid.visible=false;scene.add(grid);
 const transform=new TransformControls(camera,renderer.domElement);transform.setSize(.8);scene.add(transform.getHelper());transform.addEventListener('dragging-changed',e=>{controls.enabled=!e.value;if(e.value){pushHistory()}else{syncInspector();scheduleSave()}});transform.addEventListener('objectChange',()=>{refreshShadows();if(selected){selected.position.y=Math.max(0,selected.position.y);syncInspector()}});
