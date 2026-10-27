@@ -49,7 +49,7 @@ export function createWeather({scene,sun,sky,fill,camera,onChange=()=>{}}){
  function setMode(value){if(!presets[value]&&value!=='random')return;mode=value;elapsed=0;apply(mode==='random'?choose():mode);}
  function update(now){const dt=last===null?0:Math.max(0,Math.min((now-last)/1000,.1));last=now;if(document.hidden)return;updateEffects(dt);
   if(!reducedMotion.matches){group.children.forEach((cloud,i)=>{cloud.position.x+=dt*(.12+i*.015);if(cloud.position.x>20)cloud.position.x=-20;});}
-  if(mode==='random'&&(elapsed+=dt)>=45){elapsed=0;apply(choose());}
+  if(mode==='random'&&(elapsed+=dt)>=(current==='overcast'?20:45)){elapsed=0;apply(choose());}
  }
  function snapshot(){const clone=group.clone(true);clone.children.filter(c=>!c.visible).forEach(c=>clone.remove(c));clone.userData={weather:current,mode};return clone;}
  mode='random';apply('overcast');return {setMode,update,snapshot,getState:()=>({mode,current,count:group.children.filter(c=>c.visible).length,rain:rain.filter(r=>r.mesh.visible).length,lightning:bolt.visible?1:0}),group};
