@@ -52,5 +52,5 @@ export function createWeather({scene,sun,sky,fill,camera,onChange=()=>{}}){
   if(mode==='random'&&(elapsed+=dt)>=(current==='overcast'?20:45)){elapsed=0;apply(choose());}
  }
  function snapshot(){const clone=group.clone(true);clone.children.filter(c=>!c.visible).forEach(c=>clone.remove(c));clone.userData={weather:current,mode};return clone;}
- mode='random';apply('overcast');return {setMode,update,snapshot,getState:()=>({mode,current,count:group.children.filter(c=>c.visible).length,rain:rain.filter(r=>r.mesh.visible).length,lightning:bolt.visible?1:0}),group};
+ mode='random';apply(Object.keys(presets)[Math.floor(Math.random()*Object.keys(presets).length)]);return {setMode,update,snapshot,getState:()=>({mode,current,count:group.children.filter(c=>c.visible).length,rain:rain.filter(r=>r.mesh.visible).length,lightning:bolt.visible?1:0}),group};
 }
