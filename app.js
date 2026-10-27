@@ -1,4 +1,4 @@
-import {createWeather} from './weather.js?v=rain-20s-20261027';
+import {createWeather} from './weather.js?v=random-start-20261027';
 import * as THREE from 'three';
 import {bakeCityLighting} from './ar-lighting.js?v=ar-textures-20261026';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
