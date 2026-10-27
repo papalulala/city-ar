@@ -23,3 +23,20 @@
 
 
 .library-heading h1 .city-start-title{display:block;width:184px;height:29px;object-fit:contain}@media(max-width:700px){.library-heading h1 .city-start-title{width:128px;height:20px}}
+
+@media(max-width:700px){
+ .viewport>.inspector{position:relative;inset:auto;flex:0 0 auto;width:100%;max-height:none;margin:0;padding:8px 12px;border:0;border-top:1px solid var(--line);border-radius:0;box-shadow:none;z-index:auto;overflow:visible;}
+ .viewport>.inspector:not(.has-selection){display:none}
+ .viewport>.inspector .inspector-title,.viewport>.inspector h2,.viewport>.inspector .inspector-note{display:none}
+ #selection-controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+ #selection-controls[hidden]{display:none}
+ .viewport>.inspector .mode-switch{flex:1;min-width:165px;margin:0}
+ .viewport>.inspector .mode-switch button{padding:9px 6px;font-size:12px}
+ .mobile-edit-actions{display:flex;gap:6px;flex:0 0 auto}
+ .mobile-edit-actions button{padding:9px 7px;border-radius:7px;background:#edf1e8;font-size:11px}
+ #mobile-done{background:#28513f;color:#fff}
+ #selection-details{display:none;flex-basis:100%;max-height:min(180px,24dvh);overflow:auto;overscroll-behavior:contain;padding:0 3px 5px}
+ .details-open #selection-details{display:block}
+ .viewport>.inspector .field-label{margin-top:10px}
+ .viewport>.inspector .selection-actions{margin-top:10px}
+}
