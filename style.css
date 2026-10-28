@@ -40,3 +40,9 @@
  .viewport>.inspector .field-label{margin-top:10px}
  .viewport>.inspector .selection-actions{margin-top:10px}
 }
+
+/* Keep the page sections continuous with the current city weather. */
+:root{--city-surface:#f0f2e9}
+body,.header,.library,.inspector,.bottom-bar,#canvas-wrap{background:var(--city-surface)}
+.header,.library,.inspector,.bottom-bar,.library-foot,.viewport>.inspector{border-color:transparent}
+.inspector{box-shadow:none}
