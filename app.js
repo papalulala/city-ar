@@ -25,7 +25,7 @@ const fill=new THREE.DirectionalLight(0xc5dce6,.42);fill.name='冷色柔和補�
 const shadowReceiver=new THREE.Mesh(new THREE.PlaneGeometry(80,50),new THREE.ShadowMaterial({color:0x354b38,opacity:.24}));shadowReceiver.name='透明落地陰影';shadowReceiver.rotation.x=-Math.PI/2;shadowReceiver.position.y=-.045;shadowReceiver.receiveShadow=true;scene.add(shadowReceiver);
 function refreshShadows(){renderer.shadowMap.needsUpdate=true}
 const city=new THREE.Group();city.name='博愛木都心 向城而生';scene.add(city);const landscape=new THREE.Group();landscape.name='草地步道與水系';city.add(landscape);const buildings=new THREE.Group();buildings.name='可編輯城市物件';city.add(buildings);
-const weather=createWeather({scene,sun:key,sky:skyLight,fill,camera,onChange:state=>{refreshShadows();$('weather-state').textContent=state.mode==='random'?'隨機模式 · 目前'+state.label:state.label;}});
+const weather=createWeather({scene,sun:key,sky:skyLight,fill,camera,onChange:state=>{document.documentElement.style.setProperty('--city-surface',scene.background.getStyle());refreshShadows();$('weather-state').textContent=state.mode==='random'?'隨機模式 · 目前'+state.label:state.label;}});
 $('weather-mode').addEventListener('change',e=>weather.setMode(e.target.value));
 const grid=new THREE.GridHelper(48,48,0xaabda0,0xd8dfcd);grid.position.y=-.035;grid.visible=false;scene.add(grid);
 const transform=new TransformControls(camera,renderer.domElement);transform.setSize(.8);scene.add(transform.getHelper());transform.addEventListener('dragging-changed',e=>{controls.enabled=!e.value;if(e.value){setMobileDetails(false);pushHistory()}else{syncInspector();scheduleSave()}});transform.addEventListener('objectChange',()=>{refreshShadows();if(selected){selected.position.y=Math.max(0,selected.position.y);syncInspector()}});
